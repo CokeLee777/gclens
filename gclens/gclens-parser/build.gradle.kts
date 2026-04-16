@@ -1,0 +1,1 @@
+// Common configuration is managed in subprojects {} of the root build.gradle.kts

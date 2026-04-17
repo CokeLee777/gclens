@@ -1,11 +1,6 @@
-val jspecifyVersion by extra("1.0.0")
-val junitVersion by extra("5.12.1")
-val assertjVersion by extra("3.27.3")
-val googleJavaFormatVersion by extra("1.35.0")
-
 plugins {
     java
-    id("com.diffplug.spotless") version "8.4.0" apply false
+    alias(libs.plugins.spotless) apply false
 }
 
 java {
@@ -38,12 +33,12 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.jspecify:jspecify:$jspecifyVersion")
+        implementation(rootProject.libs.jspecify)
 
-        testImplementation(platform("org.junit:junit-bom:$junitVersion"))
-        testImplementation("org.junit.jupiter:junit-jupiter")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-        testImplementation("org.assertj:assertj-core:$assertjVersion")
+        testImplementation(platform(rootProject.libs.junit.bom))
+        testImplementation(rootProject.libs.junit.jupiter)
+        testRuntimeOnly(rootProject.libs.junit.platform.launcher)
+        testImplementation(rootProject.libs.assertj)
     }
 
     tasks.withType<Test>().configureEach {
@@ -52,7 +47,7 @@ subprojects {
 
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         java {
-            googleJavaFormat(googleJavaFormatVersion)
+            googleJavaFormat(rootProject.libs.versions.googleJavaFormat.get())
             target("src/**/*.java")
         }
     }

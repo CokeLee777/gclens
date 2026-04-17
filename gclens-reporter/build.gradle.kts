@@ -8,6 +8,6 @@ application {
 
 dependencies {
     implementation(project(":gclens-analyzer"))
-    implementation("info.picocli:picocli:4.7.7")
-    annotationProcessor("info.picocli:picocli-codegen:4.7.7")
+    implementation(rootProject.libs.picocli)
+    annotationProcessor(rootProject.libs.picocli.codegen)
 }

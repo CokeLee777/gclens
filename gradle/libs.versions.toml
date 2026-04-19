@@ -1,12 +1,16 @@
 [versions]
+slf4jApi = '2.0.17'
+logbackClassic = '1.5.32'
 jspecify = "1.0.0"
 junit = "5.12.1"
 assertj = "3.27.3"
-googleJavaFormat = "1.35.0"
+googleJavaFormat = "1.27.0"
 spotless = "8.4.0"
 picocli = "4.7.7"
 
 [libraries]
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logbackClassic" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }

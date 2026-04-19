@@ -47,8 +47,8 @@ jobs:
       - name: Publish to GitHub Packages & build distributions
         run: |
           ./gradlew publish \
-            :gclens-reporter:distZip \
-            :gclens-reporter:distTar \
+            :gclens-cli:distZip \
+            :gclens-cli:distTar \
             -x test
         env:
           GITHUB_ACTOR: ${{ github.actor }}
@@ -67,7 +67,7 @@ jobs:
           generate_release_notes: true
           make_latest: true
           files: |
-            gclens-reporter/build/distributions/*.zip
-            gclens-reporter/build/distributions/*.tar
+            gclens-cli/build/distributions/*.zip
+            gclens-cli/build/distributions/*.tar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

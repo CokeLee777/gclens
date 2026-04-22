@@ -82,6 +82,8 @@ subprojects {
     }
 
     dependencies {
+        implementation(rootProject.libs.slf4j.api)
+        implementation(rootProject.libs.logback.classic)
         implementation(rootProject.libs.jspecify)
 
         testImplementation(platform(rootProject.libs.junit.bom))
@@ -97,6 +99,10 @@ subprojects {
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         java {
             googleJavaFormat(rootProject.libs.versions.googleJavaFormat.get())
+            licenseHeaderFile(
+                rootProject.file("config/spotless/license-header.txt"),
+                "(package |import |public |@|/\\*\\*|sealed |final |class |interface |enum |record )"
+            )
             target("src/**/*.java")
         }
     }

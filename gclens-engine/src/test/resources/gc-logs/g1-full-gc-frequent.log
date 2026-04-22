@@ -1,0 +1,8 @@
+[0.001s][info][gc,init] Version: 21.0.2+13-LTS
+[100.000s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 512M->256M(1024M) 10.000ms
+[720.000s][info][gc] GC(1) Pause Full (G1 Compaction Pause) 900M->512M(1024M) 500.000ms
+[1440.000s][info][gc] GC(2) Pause Full (G1 Compaction Pause) 950M->512M(1024M) 520.000ms
+[2160.000s][info][gc] GC(3) Pause Full (G1 Compaction Pause) 940M->512M(1024M) 510.000ms
+[2880.000s][info][gc] GC(4) Pause Full (G1 Compaction Pause) 960M->512M(1024M) 530.000ms
+[3240.000s][info][gc] GC(5) Pause Full (G1 Compaction Pause) 970M->512M(1024M) 540.000ms
+[3600.000s][info][gc] GC(6) Pause Full (G1 Compaction Pause) 980M->512M(1024M) 550.000ms

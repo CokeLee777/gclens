@@ -1,0 +1,7 @@
+[0.001s][info][gc,init] Version: 25.0.0+1
+[0.002s][info][gc,init] CardTable entry size: 512
+[1.234s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 512M->256M(1024M) 12.345ms
+[2.345s][info][gc] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 400M->200M(1024M) 8.123ms
+[3.456s][info][gc] GC(2) Pause Mixed (G1 Evacuation Pause) 600M->300M(1024M) 15.678ms
+[4.567s][info][gc] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 500M->250M(1024M) 10.456ms
+[5.678s][info][gc] GC(4) Pause Young (Normal) (G1 Evacuation Pause) 480M->240M(1024M) 9.876ms

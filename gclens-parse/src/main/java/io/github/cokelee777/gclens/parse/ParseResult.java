@@ -1,0 +1,40 @@
+/*
+ * Copyright 2026-present the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.github.cokelee777.gclens.parse;
+
+import io.github.cokelee777.gclens.model.GCEvent;
+
+/** The outcome of attempting to parse a single log line. */
+public sealed interface ParseResult
+    permits ParseResult.Success, ParseResult.Skip, ParseResult.Warn {
+
+  /**
+   * Indicates that the line was parsed into a GC event.
+   *
+   * @param event the parsed event
+   */
+  record Success(GCEvent event) implements ParseResult {}
+
+  /** Indicates that the line should be ignored. */
+  record Skip() implements ParseResult {}
+
+  /**
+   * Indicates that the line looked relevant but could not be parsed.
+   *
+   * @param line the original unparsed line
+   */
+  record Warn(String line) implements ParseResult {}
+}

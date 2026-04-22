@@ -103,9 +103,12 @@ jobs:
           name: build-artifacts
           path: |
             gclens-bom/build/
-            gclens-parser/build/
-            gclens-analyzer/build/
-            gclens-reporter/build/
+            gclens-model/build/
+            gclens-parse/build/
+            gclens-insights/build/
+            models/gclens-g1gc/build/
+            gclens-engine/build/
+            gclens-cli/build/
           retention-days: 1
 
   unit-test:
@@ -151,8 +154,11 @@ jobs:
         with:
           name: unit-test-results
           path: |
-            gclens-parser/build/reports/tests/test/
-            gclens-analyzer/build/reports/tests/test/
-            gclens-reporter/build/reports/tests/test/
+            gclens-model/build/reports/tests/test/
+            gclens-parse/build/reports/tests/test/
+            gclens-insights/build/reports/tests/test/
+            models/gclens-g1gc/build/reports/tests/test/
+            gclens-engine/build/reports/tests/test/
+            gclens-cli/build/reports/tests/test/
           if-no-files-found: warn
           retention-days: 7

@@ -47,6 +47,7 @@ jobs:
       - name: Publish to GitHub Packages & build distributions
         run: |
           ./gradlew publish \
+            :gclens-cli:jar \
             :gclens-cli:distZip \
             :gclens-cli:distTar \
             -x test
@@ -69,5 +70,6 @@ jobs:
           files: |
             gclens-cli/build/distributions/*.zip
             gclens-cli/build/distributions/*.tar
+            gclens-cli/build/libs/gclens-cli-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

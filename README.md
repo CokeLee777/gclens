@@ -18,6 +18,28 @@
 - Heuristic warnings (e.g. frequent full GC, heap pressure) driven by [`GCWarningDetector`](gclens-insights/src/main/java/io/github/cokelee777/gclens/report/GCWarningDetector.java)
 - Modular Gradle build: core contracts, engine orchestration, optional collector implementations under `models/`
 
+## Installation
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cokelee777/gclens/main/install.sh | sh
+```
+
+The script installs the latest release:
+
+- Requires **Java** to be available on `$PATH`
+- Installs to `/usr/local/bin/gclens` (uses `sudo` if needed)
+- If `sudo` is unavailable, falls back to `~/.local/bin/gclens` — add it to `PATH` if not already:
+
+  ```bash
+  export PATH="$PATH:$HOME/.local/bin"
+  ```
+
+To verify:
+
+```bash
+gclens --help
+```
+
 ## Requirements
 
 - **JDK 25** (toolchain configured in the build)
@@ -115,7 +137,7 @@ Use the BOM to align versions:
 
 ```kotlin
 dependencies {
-    implementation(platform("io.github.cokelee777:gclens-bom:0.0.1-SNAPSHOT"))
+    implementation(platform("io.github.cokelee777:gclens-bom:0.1.0"))
     implementation("io.github.cokelee777:gclens-engine")
     runtimeOnly("io.github.cokelee777:gclens-g1gc")
 }

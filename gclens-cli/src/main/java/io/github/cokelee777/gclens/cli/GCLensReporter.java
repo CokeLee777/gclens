@@ -16,6 +16,7 @@
 package io.github.cokelee777.gclens.cli;
 
 import io.github.cokelee777.gclens.cli.command.AnalyzeCommand;
+import io.github.cokelee777.gclens.cli.command.WatchCommand;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import picocli.CommandLine;
@@ -26,7 +27,7 @@ import picocli.CommandLine.Spec;
 /** Picocli entry point for the GCLens CLI. */
 @Command(
     name = "gclens",
-    subcommands = {AnalyzeCommand.class},
+    subcommands = {AnalyzeCommand.class, WatchCommand.class},
     description = "GCLens — JVM GC log analyzer")
 public class GCLensReporter implements Runnable {
 

@@ -19,6 +19,8 @@ import io.github.cokelee777.gclens.analysis.HeapAnalyzer;
 import io.github.cokelee777.gclens.analysis.PauseAnalyzer;
 import io.github.cokelee777.gclens.analysis.ThroughputAnalyzer;
 import io.github.cokelee777.gclens.model.GCEvent;
+import io.github.cokelee777.gclens.model.GCLogVersion;
+import io.github.cokelee777.gclens.model.MemorySize;
 import io.github.cokelee777.gclens.parse.GCLogParseException;
 import io.github.cokelee777.gclens.parse.GCLogParser;
 import io.github.cokelee777.gclens.parse.GCLogParserFactory;
@@ -27,6 +29,7 @@ import io.github.cokelee777.gclens.report.GCReport;
 import io.github.cokelee777.gclens.report.GCWarning;
 import io.github.cokelee777.gclens.report.GCWarningDetector;
 import io.github.cokelee777.gclens.report.HeapStats;
+import io.github.cokelee777.gclens.report.HeapTrend;
 import io.github.cokelee777.gclens.report.PauseStats;
 import io.github.cokelee777.gclens.report.Summary;
 import java.nio.file.Path;
@@ -77,19 +80,55 @@ public class GCLogAnalyzer {
 
     GCLogParser parser = parserFactory.createFor(logPath);
     ParsedLog parsed = parser.parse(logPath);
-    List<GCEvent> events = parsed.events();
-
-    PauseStats pause = pauseAnalyzer.analyze(events);
-    HeapStats heap = heapAnalyzer.analyze(events);
-    double throughput = throughputAnalyzer.analyze(events);
-    Summary summary = buildSummary(events, parsed);
-
-    List<GCWarning> warnings = warningDetector.detect(summary, pause, heap, throughput);
-
-    return new GCReport(summary, pause, heap, throughput, warnings, parsed.parseWarnings());
+    return buildReport(parsed.events(), parsed.jdkVersion(), parsed.parseWarnings());
   }
 
-  private Summary buildSummary(List<GCEvent> events, ParsedLog parsed) {
+  /**
+   * Builds a report from already-parsed events without reading {@code Path}. When {@code events} is
+   * empty, returns sentinel statistics and skips GC warning detection.
+   */
+  public GCReport buildReport(
+      List<GCEvent> events, GCLogVersion jdkVersion, List<String> parseWarnings) {
+    Objects.requireNonNull(events, "events must not be null");
+    Objects.requireNonNull(jdkVersion, "jdkVersion must not be null");
+    Objects.requireNonNull(parseWarnings, "parseWarnings must not be null");
+
+    List<String> parseWarningsCopy = List.copyOf(parseWarnings);
+    Summary summary = buildSummary(events, jdkVersion);
+
+    PauseStats pause;
+    HeapStats heap;
+    double throughput;
+    if (events.isEmpty()) {
+      pause =
+          new PauseStats(Duration.ZERO, Duration.ZERO, Duration.ZERO, Duration.ZERO, Duration.ZERO);
+      heap =
+          new HeapStats(
+              new MemorySize(0),
+              new MemorySize(0),
+              new MemorySize(0),
+              new MemorySize(0),
+              HeapTrend.STABLE);
+      throughput = 0.0;
+    } else {
+      pause = pauseAnalyzer.analyze(events);
+      heap = heapAnalyzer.analyze(events);
+      throughput = throughputAnalyzer.analyze(events);
+    }
+
+    List<GCWarning> warnings =
+        summary.totalEvents() == 0
+            ? List.of()
+            : warningDetector.detect(summary, pause, heap, throughput);
+
+    return new GCReport(summary, pause, heap, throughput, warnings, parseWarningsCopy);
+  }
+
+  private Summary buildSummary(List<GCEvent> events, GCLogVersion jdkVersion) {
+    if (events.isEmpty()) {
+      return new Summary(0, Duration.ZERO, Duration.ZERO, 0, 0, 0, jdkVersion);
+    }
+
     long youngCount = 0;
     long mixedCount = 0;
     long fullCount = 0;
@@ -109,12 +148,6 @@ public class GCLogAnalyzer {
     Duration analysisPeriod = last.timestamp().plus(last.duration()).minus(first.timestamp());
 
     return new Summary(
-        events.size(),
-        totalPause,
-        analysisPeriod,
-        youngCount,
-        mixedCount,
-        fullCount,
-        parsed.jdkVersion());
+        events.size(), totalPause, analysisPeriod, youngCount, mixedCount, fullCount, jdkVersion);
   }
 }

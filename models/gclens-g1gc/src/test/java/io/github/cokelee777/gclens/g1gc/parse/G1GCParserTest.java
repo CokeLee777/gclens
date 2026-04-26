@@ -77,13 +77,15 @@ class G1GCParserTest {
   }
 
   @Test
-  void parse_nonGcLinesOnly_throwsException(@TempDir Path dir) throws IOException {
+  void parse_nonGcLinesOnly_returnsEmptyEvents(@TempDir Path dir)
+      throws IOException, GCLogParseException {
     Path log = dir.resolve("gc.log");
     Files.writeString(log, "[0.001s][info][gc,init] CardTable entry size: 512\n");
 
-    assertThatThrownBy(() -> parser.parse(log))
-        .isInstanceOf(GCLogParseException.class)
-        .hasMessageContaining("No GC events");
+    ParsedLog result = parser.parse(log);
+
+    assertThat(result.events()).isEmpty();
+    assertThat(result.parseWarnings()).isEmpty();
   }
 
   @Test
@@ -106,5 +108,62 @@ class G1GCParserTest {
     Path log = dir.resolve("app.log");
     Files.writeString(log, "some application log content\n");
     assertThat(parser.supports(log)).isFalse();
+  }
+
+  @Test
+  void supports_emptyGcNamedFile_returnsTrue(@TempDir Path dir) throws IOException {
+    Path log = dir.resolve("gc.log");
+    Files.createFile(log);
+    assertThat(parser.supports(log)).isTrue();
+  }
+
+  @Test
+  void supports_emptyUnrelatedName_returnsFalse(@TempDir Path dir) throws IOException {
+    Path log = dir.resolve("empty.log");
+    Files.createFile(log);
+    assertThat(parser.supports(log)).isFalse();
+  }
+
+  @Test
+  void supports_emptyMisleadingNameContainingGcSubstring_returnsFalse(@TempDir Path dir)
+      throws IOException {
+    Path log = dir.resolve("agc.log");
+    Files.createFile(log);
+    assertThat(parser.supports(log)).isFalse();
+  }
+
+  @Test
+  void supports_gcInitHeaderOnly_returnsTrue(@TempDir Path dir) throws IOException {
+    Path log = dir.resolve("init-only.log");
+    Files.writeString(log, "[0.001s][info][gc,init] Version: 21.0.2+13-LTS\n");
+    assertThat(parser.supports(log)).isTrue();
+  }
+
+  @Test
+  void supports_optionalSpaceBetweenInfoAndGcTag(@TempDir Path dir) throws IOException {
+    Path log = dir.resolve("gclog-spaced.log");
+    Files.writeString(
+        log,
+        "[0.001s][info] [gc,init] Version: 21.0.2+13-LTS (spaced, non-standard but tolerated)\n");
+    assertThat(parser.supports(log)).isTrue();
+  }
+
+  @Test
+  void supports_symbolicLinkToG1File(@TempDir Path dir) throws IOException {
+    Path real = dir.resolve("real.log");
+    Files.writeString(
+        real,
+        """
+        [0.1s][info][gc,init] Version: 17
+        [1.0s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 1M->1M(1M) 0.1ms
+        """);
+    Path link = dir.resolve("link.log");
+    try {
+      Files.createSymbolicLink(link, real);
+    } catch (UnsupportedOperationException e) {
+      // Symlinks not supported in this file store; skip
+      return;
+    }
+    assertThat(parser.supports(link)).isTrue();
   }
 }

@@ -38,6 +38,11 @@ public class CliReporter implements GCReporter {
 
   @Override
   public void report(GCReport report) {
+    log.info("{}", formatReportText(report));
+  }
+
+  /** Formats {@code report} using the same layout as {@link #report}, without logging. */
+  public String formatReportText(GCReport report) {
     StringBuilder output = new StringBuilder();
     appendLine(output, SEPARATOR);
     appendLine(output, " GCLens Report");
@@ -50,7 +55,7 @@ public class CliReporter implements GCReporter {
     printWarnings(output, report.warnings());
     printParseWarnings(output, report.parseWarnings());
     appendLine(output, SEPARATOR);
-    log.info("{}", output);
+    return output.toString();
   }
 
   private void printSummary(StringBuilder output, Summary s) {
